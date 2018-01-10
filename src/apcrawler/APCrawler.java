@@ -3,8 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package apcrawler;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,8 +20,16 @@ public class APCrawler {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        Mark.getMark(7047);
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 6940; i <= 7061; i++) {
+            boolean check = CSVWriter.writeToCSV(i, "dpiqkfivv7vjgf0nenusg1ss87");
+            if(check){
+                System.out.println(i + " done!");
+            }else{
+                System.out.println(i + " fail!");
+            }
+            Thread.sleep(3000);
+        }
+        System.out.println("All done!");
     }
-
 }
