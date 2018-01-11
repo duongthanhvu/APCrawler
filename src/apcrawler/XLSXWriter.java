@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -37,12 +39,25 @@ public class XLSXWriter {
         this.end = end;
     }
 
-    public void createSheet(String sheetName, List<ArrayList<String>> cell) {
+    public static boolean isNumeric(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+    }
+
+    public void createSheet(String sheetName, String subject, List<ArrayList<String>> cell) {
         Sheet sheet = wb.createSheet(sheetName);
-        for (int i = 0; i < cell.size(); i++) {
+        Row head = sheet.createRow(0);
+        head.createCell(0).setCellValue(subject);
+        for (int i = 2; i < cell.size() + 2; i++) {
             Row row = sheet.createRow(i);
-            for (int j = 0; j < cell.get(i).size(); j++) {
-                row.createCell(j).setCellValue(cell.get(i).get(j));
+            for (int j = 0; j < cell.get(i - 2).size(); j++) {
+                Cell xcell = row.createCell(j);
+                String data = cell.get(i - 2).get(j);
+                if (isNumeric(data)) {
+                    double so = Double.parseDouble(data);
+                    xcell.setCellValue(so);
+                }else{
+                    xcell.setCellValue(data);
+                }
             }
         }
     }
@@ -85,20 +100,18 @@ public class XLSXWriter {
             String value = "";
             Element table = doc.selectFirst("table");
             Elements rows = table.select("tr");
-            for (int i = 0; i < rows.size() - 2; i++) {
-                Element row = rows.get(i);
-                Elements tds = row.select("td");
-                if (tds.size() != 0) {
-                    value += tds.get(0).text() + ",";
-                    value += tds.get(1).text() + ",";
-                    value += tds.get(tds.size() - 2).text();
-                    value += "\n";
-                }
+            Element department_id = doc.selectFirst("#department_id").selectFirst("option[selected]");
+            String boMon = null;
+            if (department_id != null) {
+                boMon = department_id.text();
             }
-            if (value.equals("")) {
-                return null;
+            Element course_id = doc.selectFirst("#course_id").selectFirst("option[selected]");
+            String khoaHoc = null;
+            if (course_id != null) {
+                khoaHoc = course_id.text();
             }
-            return value;
+            String tenLop = rows.get(3).select("td").get(1).selectFirst("input").attr("value");
+            return "Bộ môn: " + boMon + " - Khóa học: " + khoaHoc + " - Tên lớp: " + tenLop;
         } catch (IOException ex) {
             Logger.getLogger(Mark.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println(ex.getMessage());
@@ -111,7 +124,8 @@ public class XLSXWriter {
             List<ArrayList<String>> content = scrapContent(i);
             String sheetName = String.valueOf(i);
             if (content != null) {
-                createSheet(sheetName, content);
+                String subject = getSubjectName(i);
+                createSheet(sheetName, subject, content);
                 System.out.println(i + "done!");
             } else {
                 System.out.println("skiped " + i + "!");
