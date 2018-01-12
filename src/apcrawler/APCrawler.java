@@ -5,12 +5,6 @@
  */
 package apcrawler;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author vudtpk0074
@@ -21,17 +15,17 @@ public class APCrawler {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws InterruptedException {
-//        for (int i = 6940; i <= 7061; i++) {
-//            boolean check = CSVWriter.writeToCSV(i, "dpiqkfivv7vjgf0nenusg1ss87");
-//            if(check){
-//                System.out.println(i + " done!");
-//            }else{
-//                System.out.println(i + " fail!");
-//            }
-//            Thread.sleep(3000);
-//        }
-        XLSXWriter writer = new XLSXWriter(7060, 7061, "fpeopogosmn9s2om7944g6uhu5");
-        writer.exportXLSX();
-        System.out.println("All done!");
+        ContentScraper scraper = new ContentScraper("1odg4ajfhrp4tusipm9n7rppr2");
+        XLSXWriter xlsxWriter = new XLSXWriter();
+        for(int i = 7060; i <= 7061; i++){
+            MarkSheet markSheet = scraper.scrapContent(i);
+            if(markSheet != null){
+                System.out.println("Scrap " + i + " done!");
+                xlsxWriter.addSheet(markSheet);
+            }else{
+                System.out.println(i + " null!"); //proposal: Lưu lại các giá trị id valid để sử dụng cho lần sau
+            }
+        }
+        xlsxWriter.exportXLSX();
     }
 }
