@@ -15,9 +15,9 @@ public class APCrawler {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws InterruptedException {
-        ContentScraper scraper = new ContentScraper("1odg4ajfhrp4tusipm9n7rppr2");
+        ContentScraper scraper = new ContentScraper("1odg4ajfhrp4tusipm9n7rppr2"); //Đăng nhập vào AP rồi copy và paste cookie PHPSESSID vào đây
         XLSXWriter xlsxWriter = new XLSXWriter();
-        for(int i = 7060; i <= 7061; i++){
+        for(int i = 6940; i <= 7061; i++){ //dải id tương ứng với kỳ Fall 2017 là 6940 đến 7061 
             MarkSheet markSheet = scraper.scrapContent(i);
             if(markSheet != null){
                 System.out.println("Scrap " + i + " done!");
